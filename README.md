@@ -92,4 +92,7 @@ Existe uma API secundária ao projeto disponível em [Desenvolvimento FullStack 
 
 
 # Atenção
-Caso a API secundária seja executada em uma porta ou URL diferente do padrão é necessário modificar o arquivo .env destá API de acordo
+Caso a API secundária seja executada em uma porta ou URL diferente do padrão é necessário modificar o arquivo .env destá API de acordo. 
+
+Por padrão o .env está configurado para execução em Docker caso for executar as APIS sem docker edite a env para:
+BASE_URL=http://localhost:4000
