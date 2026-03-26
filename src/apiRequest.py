@@ -40,12 +40,11 @@ def get_laureates():
 def get_favorites_details(ids : list[int]):
     try:
         data = []
-        for id in ids:
-            response = requests.get(
-                os.getenv("BASE_URL") + "/laureatesById?id={}".format(id)
-            )
-            data.append(response.json())
-        return data
+        response = requests.get(
+            os.getenv("BASE_URL") + "/laureatesByIds",
+            params={"ids": ids}
+        )
+        return response.json()
     except Exception as e:
         print('erro ' + str(e))
 

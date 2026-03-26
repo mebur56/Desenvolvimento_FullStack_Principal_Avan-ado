@@ -1,18 +1,13 @@
 import src.pydanticModels as pydanticModels
 import src.laureatePydanticModel as laureateModels
 import json
-import validators
+from src import validators
 from flask import Response, request
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask_cors import CORS
 import sqlite3
-import apiRequest
-import db
-## essa api terá como objetivo buscar os prêmios nobels da api secundaria pegando principalmente a descrição de pq ele foi dado
-## e por fim tera como buscar aqui apenas por essa descrição e guardar os favoritos no banco local 
-
-## filtrar por descrição
-## filtrar por valor recebido por laureado 
+from src import apiRequest
+from src import db
 
 info = Info(title="API de registro de favoritos", version="1.0.0", description="API Registro de ganhadores nobel favoritos")
 app = OpenAPI(
