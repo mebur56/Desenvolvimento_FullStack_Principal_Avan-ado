@@ -186,7 +186,7 @@ def get_favorites_details():
         )   
      
 @app.get(
-    "/exactSciecensNobel",
+    "/exactSciencesNobel",
     tags=[external_tag],
     responses={
         200: pydantic_models.NobelResponse,
