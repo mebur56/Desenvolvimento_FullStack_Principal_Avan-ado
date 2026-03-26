@@ -1,12 +1,12 @@
-import src.pydanticModels as pydanticModels
-import src.laureatePydanticModel as laureateModels
+import src.pydantic_models as pydantic_models
+import src.laureate_pydantic_models as laureateModels
 import json
 from src import validators
 from flask import Response, request
 from flask_openapi3 import OpenAPI, Info, Tag
 from flask_cors import CORS
 import sqlite3
-from src import apiRequest
+from src import api_request
 from src import db
 
 info = Info(title="API de registro de favoritos", version="1.0.0", description="API Registro de ganhadores nobel favoritos")
@@ -27,12 +27,12 @@ external_tag = Tag(name="Api secundaria", description="Requisições para API se
     "/favorites",
     tags=[favorite_tag],
     responses={
-        200: pydanticModels.FavoriteItemResponse,
-        404: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse,
+        200: pydantic_models.FavoriteItemResponse,
+        404: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse,
     }
 )
-def get_favorites(query: pydanticModels.FavoriteDetailsQuery):
+def get_favorites(query: pydantic_models.FavoriteDetailsQuery):
     """Retorna a lista de favoritos"""
     try:
         favorites = db.get_all_favorites()
@@ -42,9 +42,9 @@ def get_favorites(query: pydanticModels.FavoriteDetailsQuery):
                 status=404,
                 mimetype="application/json"
             )
-        if query.orderBy == pydanticModels.OrderByEnum.amount:
+        if query.orderBy == pydantic_models.OrderByEnum.amount:
             favorites = sorted(favorites, key=lambda x: x.get("amount", 0), reverse=True)
-        elif query.orderBy == pydanticModels.OrderByEnum.name:
+        elif query.orderBy == pydantic_models.OrderByEnum.name:
             favorites = sorted(favorites, key=lambda x: x.get("laureateName", ""))
         return Response(
             json.dumps(favorites, ensure_ascii=False),
@@ -62,17 +62,17 @@ def get_favorites(query: pydanticModels.FavoriteDetailsQuery):
     "/favorite",
     tags=[favorite_tag],
     responses={
-        201: pydanticModels.DefaultResponse,
-        400: pydanticModels.DefaultResponse,
-        409: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        201: pydantic_models.DefaultResponse,
+        400: pydantic_models.DefaultResponse,
+        409: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )
-def create_favorite(body: pydanticModels.FavoriteInput):
+def create_favorite(body: pydantic_models.FavoriteInput):
     """Cria um favorito."""
     try:
         favorite = request.get_json()
-        laureate = apiRequest.get_laureate_by_id(favorite["laureateId"])
+        laureate = api_request.get_laureate_by_id(favorite["laureateId"])
         favorite["laureateName"] = laureate["fullName"]["en"]
         favorite["motivation"] = laureate["nobelPrizes"][0]["motivation"]["en"]
         favorite["motivation"] = laureate["nobelPrizes"][0]["motivation"]["en"]
@@ -111,12 +111,12 @@ def create_favorite(body: pydanticModels.FavoriteInput):
     "/favorite",
     tags=[favorite_tag],
     responses={
-        200: pydanticModels.DefaultResponse,
-        400: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        200: pydantic_models.DefaultResponse,
+        400: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )    
-def edit_favorite(body: pydanticModels.FavoriteEditInput):
+def edit_favorite(body: pydantic_models.FavoriteEditInput):
     """Edita um favorito."""
     try:
         object = request.get_json()
@@ -137,12 +137,12 @@ def edit_favorite(body: pydanticModels.FavoriteEditInput):
     "/favorite",
     tags=[favorite_tag],
     responses={
-        200: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        200: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )    
     
-def delete_favorite(query: pydanticModels.FavoriteIdQuery):
+def delete_favorite(query: pydantic_models.FavoriteIdQuery):
     """Remove um favorito pelo ID."""
     try:
         db.delete_favorite(query.id)
@@ -164,7 +164,7 @@ def delete_favorite(query: pydanticModels.FavoriteIdQuery):
     tags=[external_tag],
     responses={
         200: laureateModels.LaureateIdListResponse,
-        500: pydanticModels.DefaultResponse
+        500: pydantic_models.DefaultResponse
     }
 )    
     
@@ -172,7 +172,7 @@ def get_favorites_details():
     """Retorna os detalhes de todos os ganhadores favoritos."""
     try:
         ids = db.get_favorites_ids()
-        response = apiRequest.get_favorites_details(ids)
+        response = api_request.get_favorites_details(ids)
         return Response(
             json.dumps(response, ensure_ascii=False),
             status=200,
@@ -188,15 +188,15 @@ def get_favorites_details():
     "/exactSciecensNobel",
     tags=[external_tag],
     responses={
-        200: pydanticModels.DefaultResponse,
-        500: pydanticModels.DefaultResponse
+        200: pydantic_models.DefaultResponse,
+        500: pydantic_models.DefaultResponse
     }
 )    
     
 def get_nobels():
     """Retorna os nobels e seus ganhadores dos ultimos 10 anos"""
     try:
-        response = apiRequest.get_nobels()
+        response = api_request.get_nobels()
         return Response(
             json.dumps(response, ensure_ascii=False),
             status=200,
