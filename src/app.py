@@ -180,23 +180,75 @@ def get_favorites_details():
         )
     except Exception as e:
         return Response(
-            json.dumps({"message": f"Erro ao remover favorito: {str(e)}"}, ensure_ascii=False),
+            json.dumps({"message": f"Erro ao buscar detalhes: {str(e)}"}, ensure_ascii=False),
+            status=500,
+            mimetype="application/json"
+        )   
+     
+@app.get(
+    "/exactSciecensNobel",
+    tags=[external_tag],
+    responses={
+        200: pydantic_models.NobelResponse,
+        500: pydantic_models.DefaultResponse
+    }
+)    
+    
+def get_nobels():
+    """Retorna os nobels e seus ganhadores dos ultimos 10 anos para ciências exatas"""
+    try:
+        response = api_request.get_nobels()
+        return Response(
+            json.dumps(response, ensure_ascii=False),
+            status=200,
+            mimetype="application/json"
+        )
+    except Exception as e:
+        return Response(
+            json.dumps({"message": f"Erro ao buscar nobels: {str(e)}"}, ensure_ascii=False),
             status=500,
             mimetype="application/json"
         )    
+    
 @app.get(
-    "/exactSciecensNobel",
+    "/nobelByCategory",
     tags=[external_tag],
     responses={
         200: pydantic_models.DefaultResponse,
         500: pydantic_models.DefaultResponse
     }
 )    
-    
-def get_nobels():
-    """Retorna os nobels e seus ganhadores dos ultimos 10 anos"""
+def get_nobels_by_category(query: pydantic_models.NobelQuery):
+
+    """Retorna os nobels por categoria e ano"""
     try:
-        response = api_request.get_nobels()
+        response = api_request.get_nobels_by_category(query.category, query.ye)
+        return Response(
+            json.dumps(response, ensure_ascii=False),
+            status=200,
+            mimetype="application/json"
+        )
+    except Exception as e:
+        return Response(
+            json.dumps({"message": f"Erro ao buscar nobels: {str(e)}"}, ensure_ascii=False),
+            status=500,
+            mimetype="application/json"
+        )    
+    
+
+@app.get(
+    "/allLaureates",
+    tags=[external_tag],
+    responses={
+        200: laureateModels.LaureateIdListResponse,
+        500: pydantic_models.DefaultResponse
+    }
+)        
+def get_all_Laureals():
+
+    """Retorna os nobels por categoria e ano"""
+    try:
+        response = api_request.get_laureates()
         return Response(
             json.dumps(response, ensure_ascii=False),
             status=200,
@@ -207,7 +259,7 @@ def get_nobels():
             json.dumps({"message": f"Erro ao remover favorito: {str(e)}"}, ensure_ascii=False),
             status=500,
             mimetype="application/json"
-        )    
+        )        
 
 
 if __name__ == "__main__":
