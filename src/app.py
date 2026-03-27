@@ -222,7 +222,7 @@ def get_nobels_by_category(query: pydantic_models.NobelQuery):
 
     """Retorna os nobels por categoria e ano"""
     try:
-        response = api_request.get_nobels_by_category(query.category, query.ye)
+        response = api_request.get_nobels_by_category(query.category, query.year)
         return Response(
             json.dumps(response, ensure_ascii=False),
             status=200,
